@@ -1,3 +1,40 @@
+// Welcome popup functionality
+document.addEventListener('DOMContentLoaded', function() {
+    // Check if this is the first visit
+    const hasVisited = localStorage.getItem('csvViewerVisited');
+    
+    if (hasVisited !== 'true') {
+        // Show welcome popup after a short delay
+        setTimeout(() => {
+            const popup = document.getElementById('welcome-popup');
+            const overlay = document.getElementById('overlay');
+            
+            if (popup && overlay) {
+                popup.style.display = 'block';
+                overlay.style.display = 'block';
+                
+                // Auto-hide after 5 seconds
+                setTimeout(() => {
+                    closeWelcomePopup();
+                }, 5000);
+            }
+        }, 500);
+        
+        // Mark as visited
+        localStorage.setItem('csvViewerVisited', 'true');
+    }
+});
+
+function closeWelcomePopup() {
+    const popup = document.getElementById('welcome-popup');
+    const overlay = document.getElementById('overlay');
+    
+    if (popup && overlay) {
+        popup.style.display = 'none';
+        overlay.style.display = 'none';
+    }
+}
+
 // Parallel scrolling functionality
 document.addEventListener('DOMContentLoaded', function() {
     // Find all scrollable code containers with pair IDs

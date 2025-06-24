@@ -75,6 +75,6 @@ dataset_viewer/
 │   └── highlight-init.js # Syntax highlighting initialization
 ├── templates/           # HTML templates
 │   └── csv_viewer.html  # Main template
-└── *.csv               # Your CSV data files
+└── *.csv               # The CSV data files
 ```
 

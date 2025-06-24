@@ -10,6 +10,23 @@
     <div class="container">
         <h2>CSV Data Viewer</h2>
         
+        <!-- Welcome Popup -->
+        <div id="welcome-popup" class="welcome-popup">
+            <button class="close-btn" onclick="closeWelcomePopup()">&times;</button>
+            <h3>Dataset Viewer</h3>
+            <p>Here are the default settings that are currently active:</p>
+            <ul>
+                <li><strong>CSV File:</strong> {{ selected_csv }}</li>
+                <li><strong>Selected Columns:</strong> {{ selected_columns|join(', ') }}</li>
+                <li><strong>Max Rows:</strong> {{ max_rows }}</li>
+                <li><strong>Error Type Filter:</strong> {{ selected_error_type if selected_error_type else 'None (showing all)' }}</li>
+                <li><strong>Display Mode:</strong> {{ 'Diff Highlighting' if diff_mode == 'diff' else 'Normal View' }}</li>
+            </ul>
+            <p><strong>Tip:</strong> Use parallel scrolling when viewing before/after columns - scroll in one column and the paired column will scroll in sync!</p>
+            <p><em>This popup will automatically disappear in 5 seconds, or click the × to close it now.</em></p>
+        </div>
+        <div id="overlay" class="overlay"></div>
+        
         <form method="get" class="form-section">
             <div class="form-group">
                 <label>CSV File:</label>
