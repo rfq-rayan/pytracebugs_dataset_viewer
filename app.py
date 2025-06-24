@@ -1,7 +1,13 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, flash
 import os
 import csv
 import sys
+import logging
+from config import Config
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # Increase CSV field limit to handle large code snippets
 maxInt = sys.maxsize
@@ -12,23 +18,14 @@ while True:
     except OverflowError:
         maxInt = int(maxInt/10)
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static')
+app.config.from_object(Config)
 
 # Directory where CSVs are located
-CSV_DIR = '.'
-# Directory where code files are located
-CODE_DIR = os.path.join('buggy_dataset', 'buggy_snippets_files')
+CSV_DIR = app.config['CSV_DIR']
 
 # Error types for filtering
-ERROR_TYPES = [
-    'AttributeError', 'TypeError', 'ValueError', 'KeyError', 'IndexError', 'AssertionError', 'RuntimeError', 'Exception',
-    'ImportError', 'FileNotFoundError', 'OSError', 'UnicodeDecodeError', 'NotImplementedError', 'ModuleNotFoundError',
-    'OperationalError', 'UnboundLocalError', 'IOError', 'subprocess.CalledProcessError', 'UnicodeEncodeError', 'NameError',
-    'RecursionError', 'ZeroDivisionError', 'PermissionError', 'dvc.exceptions.RemoteCacheRequiredError',
-    'botocore.exceptions.ClientError', 'sqlite3.OperationalError', 'pydantic.error_wrappers.ValidationError',
-    'bleak.exc.BleakError', 'ConnectionResetError', 'SystemError', 'SyntaxError', 'BrokenPipeError',
-    'json.decoder.JSONDecodeError', 'sphinx.errors.SphinxWarning'
-]
+ERROR_TYPES = app.config['ERROR_TYPES']
 
 # Helper to list CSV files in root
 def list_csv_files():
@@ -64,6 +61,7 @@ def csv_viewer():
     selected_columns = request.args.getlist('columns')
     max_rows = int(request.args.get('max_rows', 10))
     selected_error_type = request.args.get('error_type', '')
+    diff_mode = request.args.get('diff_mode', 'diff')  # Default to diff mode
 
     if not selected_csv:
         return "No CSV files found"
@@ -75,16 +73,57 @@ def csv_viewer():
     # Get all available columns
     all_columns = list(rows[0].keys()) if rows else []
 
-    # Reorder columns: before_merge should come before after_merge
+    # Reorder columns: pair before_merge with after_merge, full_file_code_before_merge with full_file_code_after_merge, etc.
     reordered_columns = []
-    before_merge_cols = [col for col in all_columns if 'before_merge' in col.lower()]
-    after_merge_cols = [col for col in all_columns if 'after_merge' in col.lower()]
     other_cols = [col for col in all_columns if 'merge' not in col.lower()]
     
-    # Add columns in order: other columns, before_merge, after_merge
+    # Get all merge-related columns
+    merge_cols = [col for col in all_columns if 'merge' in col.lower()]
+    
+    # Group merge columns by their base name (before/after pairs)
+    merge_pairs = {}
+    for col in merge_cols:
+        if 'before_merge' in col.lower():
+            # Extract the base name (e.g., 'full_file_code' from 'full_file_code_before_merge')
+            base_name = col.replace('_before_merge', '')
+            if base_name not in merge_pairs:
+                merge_pairs[base_name] = {'before': None, 'after': None}
+            merge_pairs[base_name]['before'] = col
+        elif 'after_merge' in col.lower():
+            # Extract the base name (e.g., 'full_file_code' from 'full_file_code_after_merge')
+            base_name = col.replace('_after_merge', '')
+            if base_name not in merge_pairs:
+                merge_pairs[base_name] = {'before': None, 'after': None}
+            merge_pairs[base_name]['after'] = col
+    
+    # Add other columns first
     reordered_columns.extend(other_cols)
-    reordered_columns.extend(before_merge_cols)
-    reordered_columns.extend(after_merge_cols)
+    
+    # Add merge pairs side by side
+    for base_name, pair in merge_pairs.items():
+        if pair['before']:
+            reordered_columns.append(pair['before'])
+        if pair['after']:
+            reordered_columns.append(pair['after']) 
+
+    # If no columns are selected, pre-select before_merge and after_merge columns
+    if not selected_columns:
+        # Only select columns that are exactly named 'before_merge' and 'after_merge'
+        exact_merge_cols = []
+        if 'before_merge' in all_columns:
+            exact_merge_cols.append('before_merge')
+        if 'after_merge' in all_columns:
+            exact_merge_cols.append('after_merge')
+        
+        # Add traceback_type at the beginning if it exists
+        if 'traceback_type' in all_columns:
+            selected_columns = ['traceback_type'] + exact_merge_cols
+        else:
+            selected_columns = exact_merge_cols
+
+    # If no error type is selected and traceback_type is in selected columns, default to TypeError
+    if not selected_error_type and 'traceback_type' in selected_columns:
+        selected_error_type = 'TypeError'
 
     # If 'traceback_type' is selected and error_type is chosen, filter rows
     if 'traceback_type' in selected_columns and selected_error_type:
@@ -108,7 +147,8 @@ def csv_viewer():
         selected_error_type=selected_error_type,
         error_types=ERROR_TYPES,
         display_rows_with_indices=display_rows_with_indices,
-        total_rows=len(rows)
+        total_rows=len(rows),
+        diff_mode=diff_mode
     )
 
 if __name__ == '__main__':

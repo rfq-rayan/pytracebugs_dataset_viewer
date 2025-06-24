@@ -4,218 +4,7 @@
     <meta charset="UTF-8">
     <title>CSV Data Viewer</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github-dark.min.css">
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 20px;
-            background-color: #f5f5f5;
-        }
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        h2 {
-            color: #333;
-            border-bottom: 2px solid #007acc;
-            padding-bottom: 10px;
-        }
-        .form-section {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        label {
-            font-weight: bold;
-            color: #555;
-            display: block;
-            margin-bottom: 5px;
-        }
-        select, input[type="number"] {
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-        .checkbox-group {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 8px;
-            margin-top: 10px;
-        }
-        .checkbox-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .checkbox-item input[type="checkbox"] {
-            margin: 0;
-        }
-        button {
-            background: #007acc;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-        button:hover {
-            background: #005a9e;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            background: white;
-        }
-        th {
-            background: #007acc;
-            color: white;
-            padding: 12px;
-            text-align: left;
-            font-weight: bold;
-        }
-        td {
-            padding: 12px;
-            border: 1px solid #ddd;
-            vertical-align: top;
-        }
-        .code-cell {
-            background: #1e1e1e;
-            color: #d4d4d4;
-            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-            font-size: 12px;
-            line-height: 1.4;
-        }
-        .code-cell pre {
-            margin: 0;
-            background: transparent;
-            border: none;
-            padding: 0;
-        }
-        .code-cell code {
-            background: transparent;
-            padding: 0;
-        }
-        .regular-cell {
-            background: white;
-            max-width: 300px;
-            word-wrap: break-word;
-        }
-        .info-text {
-            color: #666;
-            font-style: italic;
-            text-align: center;
-            padding: 20px;
-        }
-        .stats {
-            background: #e3f2fd;
-            padding: 10px;
-            border-radius: 4px;
-            margin-bottom: 15px;
-        }
-        .code-diff {
-            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-            font-size: 12px;
-            line-height: 1.4;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-        .diff-line {
-            padding: 2px 4px;
-            margin: 1px 0;
-            border-radius: 2px;
-            white-space: pre-wrap;
-            display: flex;
-        }
-        .line-number {
-            background: #2d2d30;
-            color: #858585;
-            padding: 2px 8px;
-            min-width: 40px;
-            text-align: right;
-            border-right: 1px solid #3c3c3c;
-            user-select: none;
-            font-size: 11px;
-        }
-        .line-content {
-            flex: 1;
-            padding: 2px 4px;
-        }
-        .diff-line.equal {
-            background-color: #1e1e1e;
-            color: #d4d4d4;
-        }
-        .diff-line.modified {
-            background-color: #4a4a1e;
-            color: #ffff6b;
-        }
-        .diff-line.deleted {
-            background-color: #4a1e1e;
-            color: #ff6b6b;
-        }
-        .diff-line.added {
-            background-color: #1e4a1e;
-            color: #6bff6b;
-        }
-        .diff-line.empty {
-            background-color: #2d2d30;
-            color: #858585;
-            font-style: italic;
-        }
-        .normal-code {
-            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-            font-size: 12px;
-            line-height: 1.4;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-        .normal-line {
-            padding: 2px 4px;
-            margin: 1px 0;
-            display: flex;
-            background-color: #1e1e1e;
-            color: #d4d4d4;
-        }
-        .cell-container {
-            position: relative;
-        }
-        .copy-button {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            background: #007acc;
-            color: white;
-            border: none;
-            border-radius: 3px;
-            padding: 4px 8px;
-            font-size: 10px;
-            cursor: pointer;
-            opacity: 0;
-            transition: opacity 0.2s;
-            z-index: 10;
-        }
-        .copy-button:hover {
-            background: #005a9e;
-        }
-        .cell-container:hover .copy-button {
-            opacity: 1;
-        }
-        .copy-success {
-            background: #28a745 !important;
-        }
-        .copy-error {
-            background: #dc3545 !important;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <div class="container">
@@ -262,8 +51,8 @@
             <div class="form-group">
                 <label>Code Display Mode:</label>
                 <select name="diff_mode" onchange="this.form.submit()">
-                    <option value="normal" {% if request.args.get('diff_mode', 'normal') == 'normal' %}selected{% endif %}>Normal View</option>
-                    <option value="diff" {% if request.args.get('diff_mode') == 'diff' %}selected{% endif %}>Diff Highlighting</option>
+                    <option value="normal" {% if diff_mode == 'normal' %}selected{% endif %}>Normal View</option>
+                    <option value="diff" {% if diff_mode == 'diff' %}selected{% endif %}>Diff Highlighting</option>
                 </select>
             </div>
 
@@ -280,7 +69,7 @@
             {% if selected_error_type %}
             <br><em>Filtered by error type: {{ selected_error_type }}</em>
             {% endif %}
-            {% if request.args.get('diff_mode') == 'diff' %}
+            {% if diff_mode == 'diff' %}
             <br><strong>Diff Mode:</strong> 
             <span style="color: #ff6b6b;">Red = Deleted</span> | 
             <span style="color: #6bff6b;">Green = Added</span> | 
@@ -306,7 +95,7 @@
                         <div class="cell-container">
                             <button class="copy-button" onclick="copyCellContent(this, '{{ loop.index0 }}', '{{ loop.index }}')">Copy</button>
                             {% if 'merge' in col.lower() or 'code' in col.lower() or 'snippet' in col.lower() %}
-                                {% if request.args.get('diff_mode') == 'diff' %}
+                                {% if diff_mode == 'diff' %}
                                     {% if 'before_merge' in col.lower() %}
                                         {% set after_col = col.replace('before_merge', 'after_merge') %}
                                         {% if after_col in selected_columns and after_col in row %}
@@ -315,7 +104,7 @@
                                             {% set before_len = before_lines|length %}
                                             {% set after_len = after_lines|length %}
                                             {% set max_len = before_len if before_len > after_len else after_len %}
-                                            <div class="code-diff">
+                                            <div class="code-diff" id="scroll-{{ original_index }}-{{ col }}" data-pair-id="scroll-{{ original_index }}-{{ after_col }}" data-is-before="true">
                                                 {% for i in range(max_len) %}
                                                     {% if i < before_len and i < after_len %}
                                                         {% if before_lines[i] == after_lines[i] %}
@@ -344,7 +133,7 @@
                                             </div>
                                         {% else %}
                                             {% set lines = row[col].split('\n') %}
-                                            <div class="normal-code">
+                                            <div class="normal-code" id="scroll-{{ original_index }}-{{ col }}">
                                                 {% for i in range(lines|length) %}
                                                 <div class="normal-line">
                                                     <div class="line-number">{{ i + 1 }}</div>
@@ -361,7 +150,7 @@
                                             {% set before_len = before_lines|length %}
                                             {% set after_len = after_lines|length %}
                                             {% set max_len = before_len if before_len > after_len else after_len %}
-                                            <div class="code-diff">
+                                            <div class="code-diff" id="scroll-{{ original_index }}-{{ col }}" data-pair-id="scroll-{{ original_index }}-{{ before_col }}" data-is-after="true">
                                                 {% for i in range(max_len) %}
                                                     {% if i < before_len and i < after_len %}
                                                         {% if before_lines[i] == after_lines[i] %}
@@ -390,7 +179,7 @@
                                             </div>
                                         {% else %}
                                             {% set lines = row[col].split('\n') %}
-                                            <div class="normal-code">
+                                            <div class="normal-code" id="scroll-{{ original_index }}-{{ col }}">
                                                 {% for i in range(lines|length) %}
                                                 <div class="normal-line">
                                                     <div class="line-number">{{ i + 1 }}</div>
@@ -401,7 +190,7 @@
                                         {% endif %}
                                     {% else %}
                                         {% set lines = row[col].split('\n') %}
-                                        <div class="normal-code">
+                                        <div class="normal-code" id="scroll-{{ original_index }}-{{ col }}">
                                             {% for i in range(lines|length) %}
                                             <div class="normal-line">
                                                 <div class="line-number">{{ i + 1 }}</div>
@@ -412,7 +201,7 @@
                                     {% endif %}
                                 {% else %}
                                     {% set lines = row[col].split('\n') %}
-                                    <div class="normal-code">
+                                    <div class="normal-code" id="scroll-{{ original_index }}-{{ col }}">
                                         {% for i in range(lines|length) %}
                                         <div class="normal-line">
                                             <div class="line-number">{{ i + 1 }}</div>
@@ -439,71 +228,7 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
-    <script>hljs.highlightAll();</script>
-    
-    <script>
-        async function copyCellContent(button, rowIndex, colIndex) {
-            const cellContainer = button.closest('.cell-container');
-            let textContent = '';
-            
-            // Extract text content based on cell type
-            if (cellContainer.querySelector('.code-diff, .normal-code')) {
-                // For code cells, extract all line content
-                const lines = cellContainer.querySelectorAll('.line-content');
-                textContent = Array.from(lines).map(line => line.textContent).join('\n');
-            } else {
-                // For regular cells, get the text content
-                textContent = cellContainer.textContent.replace('Copy', '').trim();
-            }
-            
-            try {
-                await navigator.clipboard.writeText(textContent);
-                
-                // Show success feedback
-                const originalText = button.textContent;
-                button.textContent = 'Copied!';
-                button.classList.add('copy-success');
-                
-                setTimeout(() => {
-                    button.textContent = originalText;
-                    button.classList.remove('copy-success');
-                }, 2000);
-                
-            } catch (err) {
-                // Fallback for older browsers
-                const textArea = document.createElement('textarea');
-                textArea.value = textContent;
-                document.body.appendChild(textArea);
-                textArea.select();
-                
-                try {
-                    document.execCommand('copy');
-                    
-                    // Show success feedback
-                    const originalText = button.textContent;
-                    button.textContent = 'Copied!';
-                    button.classList.add('copy-success');
-                    
-                    setTimeout(() => {
-                        button.textContent = originalText;
-                        button.classList.remove('copy-success');
-                    }, 2000);
-                    
-                } catch (fallbackErr) {
-                    // Show error feedback
-                    const originalText = button.textContent;
-                    button.textContent = 'Error!';
-                    button.classList.add('copy-error');
-                    
-                    setTimeout(() => {
-                        button.textContent = originalText;
-                        button.classList.remove('copy-error');
-                    }, 2000);
-                }
-                
-                document.body.removeChild(textArea);
-            }
-        }
-    </script>
+    <script src="{{ url_for('static', filename='highlight-init.js') }}"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html> 
